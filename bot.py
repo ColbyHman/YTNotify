@@ -37,5 +37,7 @@ async def on_message(message):
         await message.channel.send(controller.update_channels())
     if message.content.startswith('&ping'):
         await message.channel.send("Pong")
+    if message.content.startswith('&help'):
+        await message.channel.send("```\n1. Add a YouTube Channel to your server's list:\n\t&add <YouTube Channel Videos Page Link> i.e. &add https://www.youtube.com/c/YTNotify/videos\n2. List your server's YouTube Channel subs: &list\n3. Remove a channel from your server's YouTube Channel list:\n\t&remove <numbered index or channel shortname> i.e. &remove 1 OR &remove YTNotify\n4. Update channel list manually: &update\n5. View latest video from a YouTube Channel:\n\t&latest i.e. &latest <numbered index or channel shortname> i.e. &latest 1 OR &latest YTNotify```")
 
 client.run(discord_secret)
