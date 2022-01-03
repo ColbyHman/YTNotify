@@ -28,6 +28,17 @@ https://discord.com/oauth2/authorize?client_id=<YOUR CLIENT ID HERE>&permissions
 5. This URL will give the Bot permission to "Send Messages", "Embed Links", and "Mention @everyone, @here, and All Roles"
 6. Once YTNotify has joined the server, have fun! Use ``&help`` to view the list of commands
 
+## Usage
+
+1. Add a YouTube Channel to your server's list:
+    &add <YouTube Channel Videos Page Link> i.e. &add https://www.youtube.com/c/YTNotify/videos
+2. List your server's YouTube Channel subs: &list
+3. Remove a channel from your server's YouTube Channel list:
+    &remove <numbered index or channel shortname> i.e. &remove 1 OR &remove YTNotify
+4. Update channel list manually: &update
+5. View latest video from a YouTube Channel:
+    &latest i.e. &latest <numbered index or channel shortname> i.e. &latest 1 OR &latest YTNotify
+
 ## Contributing
 
 Pull requests are welcome. For any major changes to the codebase, please open up an issue for discussion on the desired changes.
