@@ -11,7 +11,6 @@ pipeline {
         stage('Create Virtual Environment') {
             steps {
                 sh """
-                    cd YTNotify
                     python3 -m venv .venv
                     . .venv/bin/activate
                     pip3 install -r requirements.txt
@@ -21,7 +20,6 @@ pipeline {
         stage('Static Analysis'){
             steps {
                 sh """
-                        cd YTNotify
                         . .venv/bin/activate
                         pylint --fail-under=8 bot.py
                         pylint --fail-under=8 lambda.py
