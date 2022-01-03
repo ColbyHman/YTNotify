@@ -30,13 +30,13 @@ https://discord.com/oauth2/authorize?client_id=<YOUR CLIENT ID HERE>&permissions
 
 ## Usage
 
-1. Add a YouTube Channel to your server's list:
+1. Add a YouTube Channel to your server's list:<br />
     &add <YouTube Channel Videos Page Link> i.e. &add https://www.youtube.com/c/YTNotify/videos
-2. List your server's YouTube Channel subs: &list
+2. List your server's YouTube Channel subs: &list<br />
 3. Remove a channel from your server's YouTube Channel list:
     &remove <numbered index or channel shortname> i.e. &remove 1 OR &remove YTNotify
 4. Update channel list manually: &update
-5. View latest video from a YouTube Channel:
+5. View latest video from a YouTube Channel:<br />
     &latest i.e. &latest <numbered index or channel shortname> i.e. &latest 1 OR &latest YTNotify
 
 ## Contributing
