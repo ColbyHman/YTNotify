@@ -13,7 +13,7 @@ With Discord communities on the rise, friends will often share videos of their f
 
 ## Installation
 
-1. Create an Application at [Discord Developer Portal](https://discord.com/developers) (DDP)
+1. Create an Application at [Discord Developer Portal](https://discord.com/developers)(DDP)
 2. Copy the Bot's Token into a .env file in the project's root directory
 3. From your CLI (Command Line Interface) of choice, execute the following command:
 
