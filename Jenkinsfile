@@ -4,6 +4,9 @@ pipeline {
           image 'python:3.8'
         }
     }
+    triggers {
+        githubPush()
+    }
     stages {
         stage('Create Virtual Environment') {
             steps {
