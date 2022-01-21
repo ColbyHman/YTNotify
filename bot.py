@@ -4,15 +4,12 @@ import discord
 from dotenv import load_dotenv
 import controller
 
-load_dotenv()
-
 client = discord.Client()
-discord_secret = os.getenv('DISCORD_TOKEN')
 
 @client.event
 async def on_ready():
     """Prints to console that Bot has connected to Discord"""
-    print(f'I have logged in!')
+    print('I have logged in!')
 
 @client.event
 async def on_guild_join(guild):
@@ -26,25 +23,50 @@ async def on_guild_remove(guild):
     print(f'I have been removed from {guild.id}')
     controller.remove_server(guild.id)
 
+def send_message(channel, message):
+    """Sends message to specific channel in a guild"""
+    channel.send(message)
+
+def get_guild_channel(guild_id, channel_id):
+    """Returns the channel object of a guild"""
+    guild = client.get_guild(guild_id)
+    if guild is None:
+        return guild
+    guild_channel = guild.get_channel(channel_id)
+    return guild_channel
+
+async def a_send_message(channel, message):
+    """Sends message to specific channel in a guild"""
+    await channel.send(message)
+
+async def a_get_guild_channel(guild_id, channel_id):
+    """Returns the channel object of a guild"""
+    guild = client.get_guild(guild_id)
+    guild_channel = guild.get_channel(channel_id)
+    return guild_channel
+
 @client.event
 async def on_message(message):
     """Handles bot commands"""
     guild_id = message.guild.id
     msg = message.content
+    channel = message.channel
+    print(await a_get_guild_channel(guild_id, channel.id))
+    print(guild_id)
     if message.content.startswith('&list'):
-        await message.channel.send(controller.list_server_info(guild_id))
+        await a_send_message(channel, controller.list_server_info(guild_id))
     if message.content.startswith('&add'):
-        await message.channel.send(controller.add_channel(guild_id, msg.split(" ")[1]))
+        await a_send_message(channel, controller.add_channel(guild_id, msg.split(" ")[1]))
     if message.content.startswith('&remove'):
-        await message.channel.send(controller.remove_channel(guild_id, msg.split(" ")[1]))
+        await a_send_message(channel, controller.remove_channel(guild_id, msg.split(" ")[1]))
     if message.content.startswith('&latest'):
-        await message.channel.send(controller.display_channel_info(guild_id, msg.split(" ")[1]))
+        await a_send_message(channel, controller.display_channel_info(guild_id, msg.split(" ")[1]))
     if message.content.startswith('&update'):
-        await message.channel.send(controller.update_channels())
+        await a_send_message(channel, controller.update_channels())
     if message.content.startswith('&ping'):
-        await message.channel.send("Pong")
+        await a_send_message(channel, "Pong")
     if message.content.startswith('&help'):
-        await message.channel.send("""```
+        await a_send_message(channel, """```
 1. Add a YouTube Channel to your server's list:
     &add <YouTube Channel Videos Page Link> i.e. &add https://www.youtube.com/c/YTNotify/videos
 2. List your server's YouTube Channel subs: &list
@@ -55,4 +77,11 @@ async def on_message(message):
     &latest i.e. &latest <numbered index or channel shortname> i.e. &latest 1 OR &latest YTNotify
 ```""")
 
-client.run(discord_secret)
+def main():
+    """Main Function"""
+    load_dotenv()
+    discord_secret = os.getenv('DISCORD_TOKEN')
+    client.run(discord_secret)
+
+if __name__ == '__main__':
+    main()
