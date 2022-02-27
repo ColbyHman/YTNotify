@@ -1,12 +1,10 @@
 """Module to automatically update channels in DB"""
 from datetime import datetime, timedelta
-import controller
-
-import discord
-from bot import a_send_message as send_message
 import os
+import discord
 from dotenv import load_dotenv
 from discord.ext import tasks
+from bot import send_message
 import db_model as db
 import controller
 
@@ -16,6 +14,7 @@ client = discord.Client()
 
 @tasks.loop(minutes=30)
 async def auto_notify_guilds():
+    """Notifies guilds of new videos"""
     refresh()
     channels = db.list_channels()
     servers = db.list_servers()
@@ -23,16 +22,20 @@ async def auto_notify_guilds():
     for channel in channels:
         name = channel["name"]
         last_updated = datetime.strptime(channel["last_updated"],"%Y-%m-%dT%H:%M")
-        if (datetime.now() - last_updated < timedelta(minutes=30)):
+        if datetime.now() - last_updated < timedelta(minutes=30):
             updated_channels.append(name)
-    
     for server in servers:
         subs = server["subs"]
         server_id = server["server_id"]
-        channel = server['channel']
+        guild = client.get_guild(server_id)
+        channel_name = server['channel']
+        for channel in guild.text_channels:
+            if channel.name == channel_name:
+                channel_obj = channel
+                break
         for sub in subs:
             if sub in updated_channels:
-                send_message(controller.display_channel_info(server_id, sub))
+                await send_message(channel_obj,controller.display_channel_info(server_id, sub))
 
 def refresh():
     """Calls update_channels in DB"""
@@ -41,8 +44,8 @@ def refresh():
 
 @client.event
 async def on_ready():
+    """Runs when bot is logged in and ready"""
     auto_notify_guilds.start()
     print("Logged in and connected...")
 
 client.run(discord_secret)
-
