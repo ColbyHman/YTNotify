@@ -5,9 +5,9 @@ def add_channel(channel_info):
     """Adds a channel"""
     db.add_entry_to_collection("channels", channel_info)
 
-def update_channel(channel_info):
+def update_channel(search, channel_info):
     """Updates a channel"""
-    db.update_entry_in_collection("channels", channel_info)
+    db.update_entry_in_collection("channels", search, channel_info)
 
 def remove_channel(channel_info):
     """Removes a channel"""
