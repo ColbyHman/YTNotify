@@ -1,5 +1,6 @@
 """Controller Module for the Discord Bot"""
 
+from datetime import datetime
 import json
 import re
 import requests
@@ -11,7 +12,9 @@ def validate_channel(channel_link):
         channel_name = re.search("c/(.+)/videos", channel_link)
         if not channel_name:
             channel_name = re.search("user/(.+)/videos", channel_link)
+            return None
         return channel_name.group(1)
+    return None
 
 def build_video_url(video_id):
     """Returns a video URL given the video ID"""
@@ -62,15 +65,16 @@ def find_video_dates(page):
             dates += [video_date.group(1)]
     return dates
 
-def build_channel_json(video_id, title, date, link):
+def build_channel_json(name,video_id, title, date, link, last_updated):
     """Builds the JSON payload for a YouTube channel"""
-    channel_info = {"video_id":video_id,
+    channel_info = {"name":name,
+                    "video_id":video_id,
                     "title":title,
                     "date":date,
-                    "link":link
+                    "link":link,
+                    "last_updated":last_updated
                     }
     return json.dumps(channel_info)
-
 
 def json_to_dict(json_str):
     """Converts a JSON payload to a dictionary"""
@@ -78,92 +82,126 @@ def json_to_dict(json_str):
         return json.loads(json_str)
     return {}
 
-def add_channel_to_server_json(server_id, channel_to_add):
-    """Adds a channel to the existing server JSON and returns the new payload"""
-    server_subs = json_to_dict(db.list_server_subs(server_id))
-    num_subs = len(server_subs.keys())
-    if channel_to_add not in server_subs.values():
-        server_subs[num_subs] = channel_to_add
-        return json.dumps(server_subs)
-    return None
+def add_channel_to_server(server_id, channel_to_add):
+    """Adds a channel to the existing server object and returns the new payload"""
+    query = {"server_id":server_id}
+    server_info = db.list_server_info(query)
+
+    subs = server_info["subs"]
+    if channel_to_add not in subs:
+        subs.append(channel_to_add)
+        server_info['subs'] = subs
+        return query, server_info
+    return None, None
 
 def add_channel(server_id, channel_link):
     """Adds a YouTube channel to a server's subscriptions"""
     channel_name, video, title, date = get_channel_info(channel_link)
-    channel_info = build_channel_json(video, title, date, channel_link)
+    now = str(datetime.now().isoformat(timespec="minutes"))
+    channel_info = {"name":channel_name,
+                    "video_id":video,
+                    "title":title,
+                    "date":date,
+                    "link":channel_link,
+                    "last_updated":now
+                    }
     channels = list_channels()
+    channel_exists = False
 
     if channel_name is None:
         return "Invalid Link"
-    if channel_name not in channels.keys():
-        db.add_channel(channel_name, channel_info)
+    for channel in channels:
+        if channel_name == channel["name"]:
+            channel_exists = True
 
-    server_subs = add_channel_to_server_json(server_id, channel_name)
-    if server_subs is None:
+    if not channel_exists:
+        db.add_channel(channel_info)
+
+    query, server_info = add_channel_to_server(server_id, channel_name)
+    if server_info is None:
         return "Channel already exists!"
 
-    db.add_channel_to_server_subs(server_id, server_subs)
+    db.update_discord_server(query, server_info)
     return f"{channel_name} has been added!"
 
-def add_server(server_id):
+def add_server(server_id, channel):
     """Adds a Discord server to the DB"""
-    db.add_discord_server(server_id, json.dumps({}))
+    db.add_discord_server({
+        "server_id":server_id,
+        "channel":channel.name,
+        "subs":[]
+    })
 
 def remove_channel(server_id, channel_name):
     """Removes a YouTube channel from a server's subscriptions"""
+    server_info = db.list_server_info({"server_id":server_id})
+    subs = server_info["subs"]
     if channel_name.isdigit():
         channel_name = str(int(channel_name)-1)
-    subs = json_to_dict(db.list_server_subs(server_id))
-    new_subs = {}
-    for sub in subs:
-        if channel_name == sub:
-            channel_name = subs.get(sub)
-        elif channel_name == subs.get(sub):
-            continue
-        else:
-            new_subs[sub] = subs.get(sub)
-    new_subs = json.dumps(new_subs)
-    db.add_discord_server(server_id, new_subs)
+        subs.pop(channel_name)
+    else:
+        subs.remove(channel_name)
+    server_info["subs"] = subs
+    db.add_discord_server(server_info)
     return f"{channel_name} has been removed from your server's subscriptions"
 
 def remove_server(server_id):
-    """Removes a given server ID from the DB"""
-    db.remove_discord_server(server_id)
+    """Removes a given server from the DB"""
+    db.remove_discord_server({"server_id":server_id})
 
 def update_channels():
     """Updates all channels within the DB"""
     channels = list_channels()
-    for channel in channels.keys():
-        channel_link = json_to_dict(channels.get(channel).decode("utf-8")).get("link")
-        _ , video_id, title, date = get_channel_info(channel_link)
-        channel_json = build_channel_json(video_id, title, date, channel_link)
-        db.add_channel(channel, channel_json)
+    for channel in channels:
+        channel_link = channel["link"]
+        channel_name , video_id, title, date = get_channel_info(channel_link)
+        now = str(datetime.now().isoformat(timespec="minutes"))
+        channel_info = {"name":channel_name,
+                    "video_id":video_id,
+                    "title":title,
+                    "date":date,
+                    "link":channel_link,
+                    "last_updated":now
+                    }
+        db.update_channel(channel_info)
     return "Channels have been updated!"
+
+def update_discord_channel(server_id, channel):
+    """Updates a discord server's channel preference"""
+    query = {"server_id":server_id}
+    server_info = db.list_server_info(query)
+    server_info['channel'] = channel
+    db.update_discord_server(query, server_info)
+    return f"I will now send channel updates to **#{channel}**"
 
 def list_channels():
     """Returns a list of all channels in a server"""
     return db.list_channels()
 
 def display_channel_info(server_id, channel_name):
-    """Returns a print friendly version of a YouTube channel's info"""
+    """Returns a print friendly version of a YouTube channel's info from a discord server"""
     if channel_name.isdigit():
-        channel_name = str(int(channel_name) - 1)
-        channels = json_to_dict(db.list_server_subs(server_id))
-        channel_name = channels.get(channel_name)
+        channel_name = int(channel_name) - 1
+        channels = db.list_server_info({"server_id":server_id})["subs"]
+        channel_name = channels[channel_name]
+        print(channel_name)
     if not channel_name:
         return "That channel does not exist. Check &list for your subscriptions"
-    channel = json_to_dict(db.list_channel_info(channel_name))
+    channel = db.list_channel_info({"name":channel_name})
     url = build_video_url(channel['video_id'])
     return f"> ***{channel['title']}***\n> {url}\n> `{channel['date']}`"
 
 def list_server_info(server_id):
     """Returns the list of server subscriptions"""
-    subs = json_to_dict(db.list_server_subs(server_id))
-    if len(subs.keys()) == 0:
+    server_info = db.list_server_info({"server_id":server_id})
+    subs = server_info["subs"]
+    count = 1
+    if len(subs) == 0:
         return "You have no server subscriptions!"
     output = "**Here are your server subscriptions:**\n"
-    for sub in subs.keys():
-        output += f"> ``{int(sub)+1}. {subs.get(sub)} ``\n"
+    for sub in subs:
+        output += f"> ``{count}. {sub} ``\n"
+        count+=1
     return output
 
 def get_channel_info(channel_link):
