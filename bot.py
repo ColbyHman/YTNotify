@@ -15,7 +15,12 @@ async def on_ready():
 async def on_guild_join(guild):
     """Prints to console that Bot has joined a server and adds server to DB"""
     print(f'I have logged into {guild.id}')
-    controller.add_server(guild.id)
+    first_channel = guild.text_channels[0]
+    print(first_channel.name)
+    await a_send_message(first_channel, f'Hello! Thank you for using YTNotify. By default, I will be sending messages in **{first_channel.name}**')
+    await a_send_message(first_channel, f'If you would like to change this, please use the command: &channel *channel_name*')
+
+    controller.add_server(guild.id, first_channel)
 
 @client.event
 async def on_guild_remove(guild):
@@ -51,8 +56,6 @@ async def on_message(message):
     guild_id = message.guild.id
     msg = message.content
     channel = message.channel
-    print(await a_get_guild_channel(guild_id, channel.id))
-    print(guild_id)
     if message.content.startswith('&list'):
         await a_send_message(channel, controller.list_server_info(guild_id))
     if message.content.startswith('&add'):
@@ -63,6 +66,8 @@ async def on_message(message):
         await a_send_message(channel, controller.display_channel_info(guild_id, msg.split(" ")[1]))
     if message.content.startswith('&update'):
         await a_send_message(channel, controller.update_channels())
+    if message.content.startswith('&channel'):
+        await a_send_message(channel, controller.update_discord_channel(guild_id, msg.split(" ")[1]))
     if message.content.startswith('&ping'):
         await a_send_message(channel, "Pong")
     if message.content.startswith('&help'):
