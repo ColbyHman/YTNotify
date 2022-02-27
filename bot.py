@@ -17,8 +17,10 @@ async def on_guild_join(guild):
     print(f'I have logged into {guild.id}')
     first_channel = guild.text_channels[0]
     print(first_channel.name)
-    await a_send_message(first_channel, f'Hello! Thank you for using YTNotify. By default, I will be sending messages in **{first_channel.name}**')
-    await a_send_message(first_channel, f'If you would like to change this, please use the command: &channel *channel_name*')
+    await a_send_message(first_channel,
+f'Hello! Thank you for using YTNotify. By default, I will be sending messages in **{first_channel.name}**')
+    await a_send_message(first_channel,
+'If you would like to change this, please use the command: &channel *channel_name*')
 
     controller.add_server(guild.id, first_channel)
 
@@ -28,18 +30,19 @@ async def on_guild_remove(guild):
     print(f'I have been removed from {guild.id}')
     controller.remove_server(guild.id)
 
-def send_message(channel, message):
+async def send_message(channel, message):
     """Sends message to specific channel in a guild"""
-    channel.send(message)
+    await channel.send(message)
 
-def get_guild_channel(guild_id, channel_id):
+def get_guild_channel(guild_id, channel_name):
     """Returns the channel object of a guild"""
     guild = client.get_guild(guild_id)
     if guild is None:
         return guild
-    guild_channel = guild.get_channel(channel_id)
-    return guild_channel
-
+    for channel in guild.text_channels:
+        if channel.name == channel_name:
+            return channel
+    return None
 async def a_send_message(channel, message):
     """Sends message to specific channel in a guild"""
     await channel.send(message)
