@@ -156,6 +156,7 @@ def update_channels():
         channel_link = channel["link"]
         channel_name , video_id, title, date = get_channel_info(channel_link)
         now = str(datetime.now().isoformat(timespec="minutes"))
+        query = {"name":channel_name}
         channel_info = {"name":channel_name,
                     "video_id":video_id,
                     "title":title,
@@ -163,7 +164,7 @@ def update_channels():
                     "link":channel_link,
                     "last_updated":now
                     }
-        db.update_channel(channel_info)
+        db.update_channel(query,channel_info)
     return "Channels have been updated!"
 
 def update_discord_channel(server_id, channel):
