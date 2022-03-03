@@ -1,27 +1,54 @@
 version: '3.9'
 services:
-  # Commented until needed
-  # nginx:
-  #   image: nginx
-  #   volumes:
-  #     - ./default.conf:/etc/nginx/conf.d/default.conf
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  redis:
-    image: redis
-    command: redis-server --save 60 --loglevel warning
-    volumes:
-      - ./Docker/Redis-Docker/redis-data:/var/lib/redis
-    ports:
-      - "6379:6379"
   lambda:
     build:
       context: .
-      dockerfile: Docker/Lambda-Docker/Dockerfile
+      dockerfile: application/docker_containers/Lambda-Docker/Dockerfile
+    env_file: application/config/.env
+    networks:
+      - mongodb_network
   bot:
     build:
       context: .
-      dockerfile: Docker/Bot-Docker/Dockerfile
-    env_file: .env
-      
+      dockerfile: application/docker_containers/Bot-Docker/Dockerfile
+    env_file: application/config/.env
+    networks:
+      - mongodb_network
+  mongodb:
+    command: mongod --quiet --logpath /dev/null 
+    image : mongo
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PW}
+    volumes:
+      - database:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - mongodb_network
+    restart: unless-stopped
+  mongo-express:
+    image : mongo-express
+    container_name: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_ROOT}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_ROOT_PW}
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGODB_COLBY}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGODB_COLBY_PW}
+    depends_on:
+      - mongodb
+    networks:
+      - mongodb_network
+    ports:
+      - 8081:8081
+    restart: unless-stopped
+volumes:
+  database:
+    external: true
+    name: database
+networks:
+  mongodb_network:
+    name: mongodb_network
