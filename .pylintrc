@@ -10,4 +10,5 @@ disable=import-error,
         too-few-public-methods,
         anomalous-backslash-in-string,
         too-many-arguments,
-        consider-using-join
+        consider-using-join,
+        raise-missing-from
