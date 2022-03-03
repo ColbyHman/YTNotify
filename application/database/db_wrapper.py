@@ -1,28 +1,27 @@
 """MongoDB Wrapper"""
-from mongo import Connect
 import os
+from mongo import Connect
 from dotenv import load_dotenv
 
 env = os.getenv("ENVIRONMENT")
-db = None
+DB = None
 
 if not env:
     load_dotenv("../application/config/.env")
     env = os.getenv("ENVIRONMENT")
 if env:
-    db = Connect.get_connection(env)
+    DB = Connect.get_connection(env)
 else:
     raise Exception("Database Not Connected - Environment Variable is not set")
-    exit(1)
 
 def list_collections():
     """Returns a list of collections in a database"""
-    return db.list_collection_names()
+    return DB.list_collection_names()
 
 def get_collection(collection_name):
     """Retrieve a collection if it exists. Returns None if non-existent"""
     if collection_name in list_collections():
-        return db[collection_name]
+        return DB[collection_name]
     return None
 
 def add_entry_to_collection(collection_name, entry):
