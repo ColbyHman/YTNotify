@@ -58,7 +58,7 @@ def test_search_collection_for_one():
     db.add_entry_to_collection("channels",test_entry)
     try:
         query = db.search_collection_for_one("channels", {"name":"testChannel"})
-        db.remove_entry_from_collection("channels",test_entry)
+        db.remove_entry_from_collection("channels",{"name":"testChannel"})
         assert query["name"] == "testChannel"
     except Exception as exec:
         assert False, exec
@@ -68,7 +68,7 @@ def test_update_entry_in_collection():
     try:
         db.update_entry_in_collection("channels", {"name":"testChannel"}, test_entry_updated)
         query = db.search_collection_for_one("channels", {"name":"testChannelUpdated"})
-        db.remove_entry_from_collection("channels",test_entry)
+        db.remove_entry_from_collection("channels",{"name":"testChannelUpdated"})
         assert query["name"] == "testChannelUpdated"
     except Exception as exec:
         assert False, exec
