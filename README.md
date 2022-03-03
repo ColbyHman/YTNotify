@@ -37,7 +37,7 @@ https://discord.com/oauth2/authorize?client_id=<YOUR CLIENT ID HERE>&permissions
     &remove <numbered index or channel shortname> i.e. &remove 1 OR &remove YTNotify
 4. Update channel list manually: &update
 5. View latest video from a YouTube Channel:<br />
-    &latest i.e. &latest <numbered index or channel shortname> i.e. &latest 1 OR &latest YTNotify
+    `&latest` i.e. `&latest *numbered index or channel shortname*` i.e. `&latest *1*`
 
 ## Contributing
 
