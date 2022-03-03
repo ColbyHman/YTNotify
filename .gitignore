@@ -6,3 +6,4 @@ mongodb/
 Docker/
 *.html
 .coverage
+.vscode/
