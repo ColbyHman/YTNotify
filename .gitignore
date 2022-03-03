@@ -5,3 +5,4 @@ __pycache__/
 mongodb/
 Docker/
 *.html
+.coverage
