@@ -1,0 +1,13 @@
+[MASTER]
+
+suggestion-mode=yes
+
+[MESSAGES CONTROL]
+
+disable=import-error,
+        wrong-import-position,
+        line-too-long,
+        too-few-public-methods,
+        anomalous-backslash-in-string,
+        too-many-arguments,
+        consider-using-join
