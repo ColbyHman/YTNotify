@@ -1,8 +1,9 @@
 from calendar import c
 import os
 import sys
-from mock_discord import MockDiscord
 import pytest
+from tests import mock_discord
+from mock_discord import MockDiscord
 
 sys.path.append('application/discord_bot')
 sys.path.append('application/database')
@@ -113,4 +114,3 @@ def test_remove_channel():
         assert len(subs) == 0
     except Exception as exec:
         assert False, exec
-        
