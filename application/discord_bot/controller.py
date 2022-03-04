@@ -4,7 +4,7 @@ import re
 import sys
 from datetime import datetime
 import requests
-sys.path.append('/app/application/database')
+sys.path.append('application/database')
 import db_model as db
 
 
@@ -153,7 +153,8 @@ def add_server(server_id, channel):
 
 def remove_channel(server_id, channel_name):
     """Removes a YouTube channel from a server's subscriptions"""
-    server_info = db.list_server_info({"server_id":server_id})
+    query = {"server_id":server_id}
+    server_info = db.list_server_info(query)
     subs = server_info["subs"]
     if channel_name.isdigit():
         channel_name = str(int(channel_name)-1)
@@ -161,7 +162,7 @@ def remove_channel(server_id, channel_name):
     else:
         subs.remove(channel_name)
     server_info["subs"] = subs
-    db.add_discord_server(server_info)
+    db.update_discord_server(query, server_info)
     return f"{channel_name} has been removed from your server's subscriptions"
 
 def remove_server(server_id):
