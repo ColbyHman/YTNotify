@@ -73,3 +73,14 @@ def update_entry_in_collection(collection_name, search, query):
             raise Exception("Unable to update entry")
     else:
         raise Exception("Collection does not exist!")
+
+def remove_all_entries_from_collection(collection_name):
+    collection = get_collection(collection_name)
+    if collection is not None:
+        try:
+            collection.delete_many({})
+            print(f"Cleared the {collection_name} collection!")
+        except:
+            raise Exception(f"Could not clear the {collection_name} collection!")
+    else:
+        raise Exception("Collection does not exist!")
