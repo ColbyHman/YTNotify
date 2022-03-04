@@ -17,7 +17,7 @@ class Connect():
         except TypeError:
             print("MONGODB_PW Environment Variable not set")
         server = os.getenv("MONGO_INSTANCE_NAME")
-        client = MongoClient(f"mongodb://{user}:{db_pw}@{server}:27017/?authSource=ytnotify")
+        client = MongoClient(f"mongodb://{user}:{db_pw}@{server}/?authSource=ytnotify")
 
         if environment == "test":
             database = client.test
