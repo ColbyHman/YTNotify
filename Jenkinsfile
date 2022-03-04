@@ -21,16 +21,15 @@ pipeline {
             steps {
                 sh """
                         . .venv/bin/activate
-                        pylint --fail-under=8 application/discord_bot/
-                        pylint --fail-under=8 application/scripts/lambda.py
-                        pylint --fail-under=8 application/database/
+                        make lint
                     """
             }
         }
         stage('Unit Testing'){
             steps {
                 sh """
-                    echo "Tested!"
+                    . .venv/bin/activate
+                    make test
                 """
             }
         }
