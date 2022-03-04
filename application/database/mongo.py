@@ -2,7 +2,6 @@
 
 from urllib.parse import quote
 import os
-from dotenv import load_dotenv
 from pymongo import MongoClient
 
 class Connect():
@@ -12,7 +11,7 @@ class Connect():
         """Returns connection string for MongoDB instance"""
         user = os.getenv("MONGODB_USER")
         db_pw = os.getenv("MONGODB_PW")
-        db = None
+        database = None
         try:
             db_pw = quote(db_pw)
         except TypeError:
@@ -21,9 +20,9 @@ class Connect():
         client = MongoClient(f"mongodb://{user}:{db_pw}@{server}:27017/?authSource=ytnotify")
 
         if environment == "test":
-            db = client.test
+            database = client.test
         if environment == "dev":
-            db = client.ytnotify
+            database = client.ytnotify
         if environment == "prod":
-            db = client.ytnotify
-        return db
+            database = client.ytnotify
+        return database
