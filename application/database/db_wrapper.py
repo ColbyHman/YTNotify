@@ -75,6 +75,7 @@ def update_entry_in_collection(collection_name, search, query):
         raise Exception("Collection does not exist!")
 
 def remove_all_entries_from_collection(collection_name):
+    """Remove all entries from an existing collection"""
     collection = get_collection(collection_name)
     if collection is not None:
         try:
