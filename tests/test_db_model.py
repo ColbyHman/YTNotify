@@ -1,6 +1,8 @@
+import pytest
 import sys
 sys.path.append('application/database')
 import db_model as db
+import db_wrapper as wrapper
 
 test_channel = {"name":"testChannel",
             "video_id":"video",
@@ -23,6 +25,11 @@ test_server = {"server_id": "123456789",
 
 test_server_updated = {"server_id": "123456789",
                 "subs" : ["testChannel","testChannel2"]}
+
+@pytest.fixture()
+def setup():
+    wrapper.remove_all_entries_from_collection("discord_servers")
+    wrapper.remove_all_entries_from_collection("channels")
 
 def test_add_channel():
     try:
@@ -78,7 +85,7 @@ def test_remove_discord_server():
         db.remove_discord_server({"server_id": "123456789"})
         search = db.list_servers()
         search = [x for x in search]
-        assert search == []
+        assert len(search) == 0
     except Exception as exec:
         assert False, exec
 
