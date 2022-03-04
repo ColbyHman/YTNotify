@@ -2,8 +2,7 @@ from calendar import c
 import os
 import sys
 import pytest
-from tests import mock_discord
-from mock_discord import MockDiscord
+from tests import mock_discord as mock
 
 sys.path.append('application/discord_bot')
 sys.path.append('application/database')
@@ -79,14 +78,14 @@ def test_json_to_dict():
     assert json["name"] == "name"
 
 def test_add_channel_to_server():
-    mock_server = MockDiscord("test","channel")
+    mock_server = mock.MockDiscord("test","channel")
     controller.add_server("test",mock_server)
     query, server_info = controller.add_channel_to_server("test","testChannel")
     db.remove_discord_server({"server_id":"test"})
     assert query is not None and server_info is not None
 
 def test_add_channel():
-    mock_server = MockDiscord("test","channel")
+    mock_server = mock.MockDiscord("test","channel")
     controller.add_server("test",mock_server)
     response = controller.add_channel("test","https://www.youtube.com/c/LinusTechTips/videos")
     db.remove_discord_server({"server_id":"test"})
@@ -95,14 +94,14 @@ def test_add_channel():
 
 def test_add_server():
     try:
-        mock_server = MockDiscord("test", "channel")
+        mock_server = mock.MockDiscord("test", "channel")
         controller.add_server("test", mock_server)
         db.remove_discord_server({"server_id":"test"})
     except Exception as exec:
         assert False, exec
 
 def test_remove_channel():
-    mock_server = MockDiscord("test", "channel")
+    mock_server = mock.MockDiscord("test", "channel")
     controller.add_server("test", mock_server)
     controller.add_channel("test", "https://www.youtube.com/c/LinusTechTips/videos")
     try:
