@@ -13,7 +13,7 @@ pipeline {
                 sh """
                     python3 -m venv .venv
                     . .venv/bin/activate
-                    pip3 install -r requirements.txt
+                    pip3 install -r setup/requirements.txt
                 """
             }
         }
@@ -21,10 +21,12 @@ pipeline {
             steps {
                 sh """
                         . .venv/bin/activate
-                        pylint --fail-under=8 bot.py
-                        pylint --fail-under=8 lambda.py
-                        pylint --fail-under=8 db_model.py
-                        pylint --fail-under=8 db_wrapper.py
+                        pylint --fail-under=8 application/discord_bot/bot.py
+                        pylint --fail-under=8 application/discord_bot/controller.py
+                        pylint --fail-under=8 application/scripts/lambda.py
+                        pylint --fail-under=8 application/database/db_model.py
+                        pylint --fail-under=8 application/database/db_wrapper.py
+                        pylint --fail-under=8 application/database/mongo.py
                     """
             }
         }
