@@ -10,23 +10,23 @@ With Discord communities on the rise, friends will often share videos of their f
 
 - Discord Account
 - Docker
+- Python 3.10
 
 ## Installation
 
 1. Create an Application at [Discord Developer Portal](https://discord.com/developers)(DDP)
-2. Copy the Bot's Token into a .env file in the project's root directory
-3. From your CLI (Command Line Interface) of choice, execute the following command:
-
+2. Copy the Bot's Token into a .env file in the application/config folder
+3. Add necessary MongoDB credentials to the .env file as well
+4. From your CLI (Command Line Interface) of choice, execute the following command:
 ```
 docker-compose up -d
 ```
-4. Once the containers are up and running, navigate back to the DDP and copy the Bot's Client ID. Use that ID to create your invite link with this format
-
+5. Once the containers are up and running, navigate back to the DDP and copy the Bot's Client ID. Use that ID to create your invite link with this format
 ```
 https://discord.com/oauth2/authorize?client_id=<YOUR CLIENT ID HERE>&permissions=149504&scope=bot
 ```
-5. This URL will give the Bot permission to "Send Messages", "Embed Links", and "Mention @everyone, @here, and All Roles"
-6. Once YTNotify has joined the server, have fun! Use ``&help`` to view the list of commands
+6. This URL will give the Bot permission to "Send Messages", "Embed Links", and "Mention @everyone, @here, and All Roles"
+7. Once YTNotify has joined the server, have fun! Use ``&help`` to view the list of commands
 
 ## Usage
 
