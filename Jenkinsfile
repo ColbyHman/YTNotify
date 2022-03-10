@@ -8,6 +8,13 @@ pipeline {
         githubPush()
     }
     stages {
+        stage('Build and Start Docker Service'){
+            steps {
+                sh """
+                    docker-compose up -d mongodb
+                """
+            }
+        }
         stage('Create Virtual Environment') {
             steps {
                 sh """
