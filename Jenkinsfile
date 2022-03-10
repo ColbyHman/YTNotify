@@ -1,6 +1,6 @@
 pipeline {
     agent{
-        any
+        node
     }
     triggers {
         githubPush()
@@ -9,6 +9,7 @@ pipeline {
         stage('Build and Start Docker Service'){
             steps {
                 sh """
+                    /usr/local/bin/docker-compose build
                     /usr/local/bin/docker-compose up -d mongodb
                 """
             }
