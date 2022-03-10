@@ -7,7 +7,7 @@ pipeline {
         stage('Build and Start Docker Service'){
             steps {
                 sh """
-                    curl -L https://github.com/docker/compose/releases/download/1.8.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+                    sudo curl -L https://github.com/docker/compose/releases/download/1.8.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
                     /usr/local/bin/docker-compose build
                     /usr/local/bin/docker-compose up -d mongodb
                 """
