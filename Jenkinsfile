@@ -1,8 +1,6 @@
 pipeline {
     agent{
-        docker {
-          image 'python:3.8'
-        }
+        any
     }
     triggers {
         githubPush()
@@ -11,7 +9,7 @@ pipeline {
         stage('Build and Start Docker Service'){
             steps {
                 sh """
-                    docker-compose up -d mongodb
+                    /usr/local/bin/docker-compose up -d mongodb
                 """
             }
         }
