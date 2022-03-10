@@ -7,8 +7,8 @@ pipeline {
         stage('Build and Start Docker Service'){
             steps {
                 sh """
-                    sudo /usr/local/bin/docker-compose build
-                    sudo /usr/local/bin/docker-compose up -d mongodb
+                    /usr/local/bin/docker-compose build
+                    /usr/local/bin/docker-compose up -d mongodb
                 """
             }
         }
