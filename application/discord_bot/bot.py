@@ -99,7 +99,7 @@ async def on_message(message):
 
 def main():
     """Main Function"""
-    load_dotenv('../config/.env')
+    load_dotenv('/app/aplication/config/.env')
     discord_secret = os.getenv('DISCORD_TOKEN')
     client.run(discord_secret)
 

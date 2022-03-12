@@ -4,7 +4,7 @@ import re
 import sys
 from datetime import datetime
 import requests
-sys.path.append('application/database')
+sys.path.append('/app/application/database')
 import db_model as db
 
 

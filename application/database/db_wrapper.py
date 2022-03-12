@@ -7,7 +7,7 @@ env = os.getenv("ENVIRONMENT")
 DB = None
 
 if not env:
-    load_dotenv("../application/config/.env")
+    load_dotenv("/app/application/config/.env")
     env = os.getenv("ENVIRONMENT")
 if env:
     DB = Connect.get_connection(env)
