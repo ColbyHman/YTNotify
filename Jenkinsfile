@@ -4,20 +4,12 @@ pipeline {
         githubPush()
     }
     stages {
-        stage('Build and Start Docker Service'){
-            steps {
-                sh """
-                    /usr/bin/docker-compose build mongodb
-                    /usr/bin/docker-compose up -d mongodb
-                """
-            }
-        }
         stage('Create Virtual Environment') {
             steps {
                 sh """
                     python3 -m venv .venv
                     . .venv/bin/activate
-                    pip3 install -r setup/requirements.txt
+                    pip3 install -r requirements.txt
                 """
             }
         }
@@ -27,14 +19,6 @@ pipeline {
                         . .venv/bin/activate
                         make lint
                     """
-            }
-        }
-        stage('Unit Testing'){
-            steps {
-                sh """
-                    . .venv/bin/activate
-                    make test
-                """
             }
         }
     }
