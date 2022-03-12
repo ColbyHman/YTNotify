@@ -9,4 +9,4 @@ COPY . /app
 
 RUN /app/.venv/bin/pip install -r /app/requirements.txt
 
-CMD [".venv/bin/python", "application/discord_bot/bot.py"]
+CMD ["/app/.venv/bin/python", "/app/application/discord_bot/bot.py"]
