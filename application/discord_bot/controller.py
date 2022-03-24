@@ -172,6 +172,7 @@ def remove_server(server_id):
 def update_channels():
     """Updates all channels within the DB"""
     channels = list_channels()
+    updated_channels = []
     for channel in channels:
         current_id = channel['video_id']
         channel_link = channel["link"]
@@ -188,6 +189,8 @@ def update_channels():
                     "last_updated":now
                     }
         db.update_channel(query,channel_info)
+        updated_channels.append(channel_name)
+    print("Channels updated: ", updated_channels)
     return "Channels have been updated!"
 
 def update_discord_channel(server_id, channel):
